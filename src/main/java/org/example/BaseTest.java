@@ -1,7 +1,10 @@
 package org.example;
 
 import io.appium.java_client.android.AndroidDriver;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -21,8 +24,8 @@ public class BaseTest {
         capabilities.setCapability("appium:deviceName", "pixel c");
         capabilities.setCapability("appium:udid", "912X1U9FM");
         capabilities.setCapability("platformName", "Android");
-        capabilities.setCapability("appPackage", "com.android.chrome");
-        capabilities.setCapability("appActivity", "com.google.android.apps.chrome.Main");
+        capabilities.setCapability("appPackage", "com.google.android.gm");
+        capabilities.setCapability("appActivity", "com.google.android.gm.ui.MailActivityGmail");
         capabilities.setCapability("appium:automationName", "uiautomator2");
 
 
@@ -34,6 +37,14 @@ public class BaseTest {
 
     @Test
     void blankTest() {
-       // Does nothing
+       // Does something now change comment
+        WebElement newInGmail = driver.findElement(By.id("com.google.android.gm:id/welcome_tour_title"));
+        WebElement allTheFeatures = driver.findElement(By.id("com.google.android.gm:id/welcome_tour_text"));
+        WebElement gotIt = driver.findElement(By.id("com.google.android.gm:id/welcome_tour_got_it"));
+        Assert.assertEquals(newInGmail.getText(), "New in Gmail");
+        Assert.assertEquals(allTheFeatures.getText(), "All the features you love with a fresh new look");
+        Assert.assertEquals(gotIt.getText(), "GOT IT");
+        gotIt.click();
+
     }
 }
