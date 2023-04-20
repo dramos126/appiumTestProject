@@ -1,7 +1,9 @@
 package org.example;
 
+import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.Assert;
@@ -14,31 +16,23 @@ import java.util.List;
 
 public class BaseTest {
     AndroidDriver driver;
-    String login = "iamlearningautomoation";
-    String password = "Directv1";
+    String login = "iamlearningautomation";
+    String password = "Directv1@";
+
     @BeforeTest
     public void setUp() throws Exception {
-        // Desired capabilities type of object and capabilities is the name of the object = to the right
-        // is creating a new object of DesiredCapabilites
+
         DesiredCapabilities capabilities = new DesiredCapabilities();
         String name = "";
-        // these are setting device setting capabilities
-        // https://appium.io/docs/en/writing-running-appium/caps/#uiautomator2
         capabilities.setCapability("appium:deviceName", "pixel c");
         capabilities.setCapability("appium:udid", "912X1U9FM");
         capabilities.setCapability("platformName", "Android");
         capabilities.setCapability("appPackage", "com.google.android.gm");
         capabilities.setCapability("appActivity", "com.google.android.gm.ui.MailActivityGmail");
         capabilities.setCapability("appium:automationName", "uiautomator2");
-        //full reset
-        //capabilities.setCapability("fullReset", true);
-
-        //reset after test capability
-        //capabilities.setCapability("fullReset", true);
-
-
+        capabilities.setCapability("fastReset", true);
+        capabilities.setCapability("newCommandTimeout", 600);
         driver = new AndroidDriver(new URL("http://0.0.0.0:4723/wd/hub"), capabilities);
-//        driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
     }
 
 
@@ -53,37 +47,55 @@ public class BaseTest {
         Assert.assertEquals(gotIt.getText(), "GOT IT");
         gotIt.click();
         try {
-            // try is to catch
+
             Thread.sleep(500);
-            //   System.out.println("This is before throwing a new exception");
-            //   throw new Exception("Uncaught Exception sleep throws and why we put it in try catch");
-            // below is a webelement that could not be found so it threw an exception to be caught
-            // WebElement addAnEmailAddress = driver.findElement(By.id("com.google.android.gm:id/setup_addresses_add_another"));
 
         } catch (Exception e) {
-            // will only ever get into a catch block if an exception is thrown. not everytime an exception is thrown
-           System.out.println("Caught interrupted exception that can be thrown from sleep in this example");
-         //   throw new Exception("Failed to find id Add an email address");
-
+            System.out.println("Caught interrupted exception that can be thrown from sleep in this example");
         }
-        // Thread.sleep(500);
 
-        // driver.manage().timeouts().implicitlyWait(60);
-        // wait.until(Assert.assertEquals(""););
-        // Page 2 after selecting Got it
-        // need to figure out wait
-        //wait(7000);
-        // WebElement youCanNow = driver.findElement(By.id("com.google.android.gm:id/setup_addresses_title"));
-        //  Assert.assertEquals(youCanNow.getText(), "You can now add all your email addresses. Learn more");
-         WebElement addAnEmailAddress = driver.findElement(By.id("com.google.android.gm:id/setup_addresses_add_another"));
-         Assert.assertEquals(addAnEmailAddress.getText(), "Add an email address");
-         addAnEmailAddress.click();
-         Thread.sleep(500);
-         List<WebElement> emailProviders = driver.findElements(By.id("com.google.android.gm:id/account_setup_label"));
-         emailProviders.get(0).click();
-        // A
-
-        // String login = login, "iamlearningautomoation";
-        //String password = "Directv1";
+        WebElement addAnEmailAddress = driver.findElement(By.id("com.google.android.gm:id/setup_addresses_add_another"));
+        Assert.assertEquals(addAnEmailAddress.getText(), "Add an email address");
+        addAnEmailAddress.click();
+        Thread.sleep(500);
+        //Locator strategy to make a list if Elements by certian id
+        List<WebElement> emailProviders = driver.findElements(By.id("com.google.android.gm:id/account_setup_label"));
+        //This will click the first item in the list
+        emailProviders.get(0).click();
+        // Wait in code why wait New DOM has not appeared yet and will fail
+        Thread.sleep(5000);
+        // List<WebElement> emailOrPhone = driver.findElements(By.className("android.widget.TextView"));
+        driver.findElement(By.xpath("//*[@resource-id='identifierId']")).sendKeys(login);
+        // Custom xpath to find 2 attributes on the same page in teh same hierachry path
+        String nextButtonXPath = "//*[@class='android.widget.Button' and @text='Next']";
+        driver.findElement(By.xpath(nextButtonXPath)).click();
+        Thread.sleep(500);
+        // Custom xpath to find the child of a locator resource on dif heiarchy path
+        String enterPasswordXPath = "//*[@resource-id='password']//*[@class='android.widget.EditText']";
+        driver.findElement(By.xpath(enterPasswordXPath)).sendKeys(password);
+        String nextButtonPasswordXPath = "//*[@class='android.widget.Button' and @text='Next']";
+        driver.findElement(By.xpath(nextButtonPasswordXPath)).click();
+        //String iAgreeButtonXPath = "//*[@class='android.widget.Button' and @text='I agree']";
+        //driver.findElement(By.xpath("//*[@resource-id='signinconsentNext']//*[@class='android.widget.Button'")).click();
+        // driver.findElement(By.xpath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.webkit.WebView/android.webkit.WebView/android.view.View/android.view.View[3]/android.view.View/android.widget.Button")).click();
+        //  String iAgreeButtonXPath = "//*[@resource-id='signinconsentNext']//*[@class='android.widget.Button']";
+        // driver.findElement(By.xpath(iAgreeButtonXPath)).click();
+        Thread.sleep(500);
+        driver.findElement(By.xpath("//*[@resource-id='signinconsentNext']")).click();
+        // need to swipe down before next line will throw an error
+        driver.findElement(By.xpath("//*[@text='Accept' and @class='android.widget.Button']")).click();
+        // android.widget.Button
+        // Accept android.widget.LinearLayout
     }
+
+//    public void scroll() throws InterruptedException {
+//        Dimension dimensions = driver.manage().window().getSize();
+//        for (int i = 1; i > 4; i++) {
+//            Double screenHeightStart = dimensions.getHeight() * 0.5;
+//            int scrollStart = screenHeightStart.intValue();
+//            Double screenHeightEnd = dimensions.getHeight() * 0.2;
+//            int scrollEnd = screenHeightEnd.intValue();
+//            driver.swipe(0, scrollStart, 0, scrollEnd, 2000);
+//        }
+//    }
 }
