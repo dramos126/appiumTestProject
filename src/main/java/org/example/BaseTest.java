@@ -7,6 +7,7 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.Assert;
+import io.appium.java_client.touch.offset.PointOption;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -83,9 +84,18 @@ public class BaseTest {
         Thread.sleep(500);
         driver.findElement(By.xpath("//*[@resource-id='signinconsentNext']")).click();
         // need to swipe down before next line will throw an error
-        driver.findElement(By.xpath("//*[@text='Accept' and @class='android.widget.Button']")).click();
-        // android.widget.Button
-        // Accept android.widget.LinearLayout
+        Thread.sleep(500);
+        //NEED TO SWIPE DOWN FOR BELOW LOCATOR TO BE FOUND
+        // driver.findElement(By.xpath("//*[@text='Accept' and @class='android.widget.Button']")).click();
+
+        Dimension size = driver.manage().window().getSize();
+        int startX = size.width / 2;
+        int startY = (int) (size.height * 0.8);
+        int endY = (int) (size.height * 0.2);
+
+// Create a new TouchAction object and perform the swipe down action
+        TouchAction action = new TouchAction(driver);
+        action.press(PointOption.point(startX, startY)).moveTo(PointOption.point(startX, endY)).release().perform();
     }
 
 //    public void scroll() throws InterruptedException {
