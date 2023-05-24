@@ -29,11 +29,12 @@ public class BaseTest {
         capabilities.setCapability("appium:udid", "912X1U9FM");
         capabilities.setCapability("platformName", "Android");
         capabilities.setCapability("appPackage", "com.google.android.gm");
-        capabilities.setCapability("appActivity", "com.google.android.gm.ui.MailActivityGmail");
+        //capabilities.setCapability("appActivity", "com.google.android.gm.ui.MailActivityGmail");
+        capabilities.setCapability("appActivity", "com.google.android.gm.ConversationListActivityGmail");
         capabilities.setCapability("appium:automationName", "uiautomator2");
         capabilities.setCapability("fastReset", true);
         capabilities.setCapability("newCommandTimeout", 600);
-        driver = new AndroidDriver(new URL("http://0.0.0.0:4723/wd/hub"), capabilities);
+        driver = new AndroidDriver(new URL("http://0.0.0.0:4723"), capabilities);
     }
 
 
